@@ -1,3 +1,5 @@
+import { animate } from './helpers';
+
 const modal = () => {
   const buttons = document.querySelectorAll('.popup-btn');
   const modal = document.querySelector('.popup');
@@ -6,33 +8,25 @@ const modal = () => {
   let scrollWidth = 17;
   let widthAnimation = screenWidth - scrollWidth;
 
-  let count = 0;
-  let idInterval;
-
-  const openAnimation = () => {
-    count += 0.03;
-    idInterval = requestAnimationFrame(openAnimation);
-
-    modal.style.display = 'block';
-    if (count <= 1) {
-      modal.style.opacity = count;
-    } else {
-      cancelAnimationFrame(idInterval);
-    }
-  };
-
-  buttons.forEach((btn) => {
-    btn.addEventListener('click', () => {
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
       modal.style.display = 'block';
       if (document.documentElement.clientWidth >= widthAnimation) {
-        openAnimation();
+        animate({
+          duration: 200,
+          timing(timeFraction) {
+            return timeFraction;
+          },
+          draw(progress) {
+            modal.style.opacity = progress;
+          },
+        });
       }
     });
   });
 
   modal.addEventListener('click', (event) => {
     if (!event.target.closest('.popup-content') || event.target.classList.contains('popup-close')) {
-      count = 0;
       modal.style.display = '';
     }
   });
