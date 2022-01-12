@@ -4,6 +4,7 @@ import modal from './modules/modal';
 import calc from './modules/calc';
 import forms from './modules/forms';
 import tabs from './modules/tabs';
+import slider from './modules/slider';
 
 timer('21:00:00 13 January 2022');
 menu();
@@ -13,3 +14,4 @@ forms('form1');
 forms('form2');
 forms('form3');
 tabs();
+slider();
