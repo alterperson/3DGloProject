@@ -1,5 +1,7 @@
 const sendForm = ({ formId, someElem = [] }) => {
+  const modal = document.querySelector('.popup');
   const form = document.getElementById(formId);
+  const formElements = form.querySelectorAll('input');
   const statusBlock = document.createElement('div');
   const loadText = 'Загрузка...';
   const errorText = 'Ошибка...';
@@ -8,6 +10,7 @@ const sendForm = ({ formId, someElem = [] }) => {
   const regName = /[^а-я\-\s]/gi;
   const regPhone = /[^\+\d\(\)\-]/g;
   const regMessage = /[^а-я\-\!\.\,\?\:\;\(\)\"\s]/gi;
+  const regEmail = /[^\w\@\-\.\!\~\*\'\"]/gi;
 
   statusBlock.style.color = '#ffffff';
 
@@ -15,26 +18,40 @@ const sendForm = ({ formId, someElem = [] }) => {
     let success = true;
 
     list.forEach((input) => {
-      if (input.name == 'user_phone') {
+      if (input.name === 'user_phone') {
         if (regPhone.test(input.value)) {
           success = false;
         }
       }
 
-      if (input.name == 'user_name') {
+      if (input.name === 'user_name') {
         if (regName.test(input.value)) {
           success = false;
         }
       }
 
-      if (input.name == 'user_message') {
+      if (input.name === 'user_message') {
         if (regMessage.test(input.value)) {
+          success = false;
+        }
+      }
+
+      if (input.name === 'user_email') {
+        if (regEmail.test(input.value)) {
           success = false;
         }
       }
     });
 
     return success;
+  };
+
+  const requiredEmail = () => {
+    formElements.forEach((input) => {
+      if (input.name == 'user_email') {
+        input.setAttribute('required', true);
+      }
+    });
   };
 
   const sendData = (data) => {
@@ -48,7 +65,6 @@ const sendForm = ({ formId, someElem = [] }) => {
   };
 
   const submitForm = () => {
-    const formElements = form.querySelectorAll('input');
     const formData = new FormData(form);
     const formBody = {};
 
@@ -74,6 +90,19 @@ const sendForm = ({ formId, someElem = [] }) => {
         .then((data) => {
           statusBlock.textContent = successText;
 
+          if (formId === 'form1' || formId === 'form2') {
+            setTimeout(() => {
+              statusBlock.textContent = '';
+            }, 3000);
+          }
+
+          if (formId === 'form3') {
+            setTimeout(() => {
+              modal.style.display = 'none';
+              statusBlock.textContent = '';
+            }, 1500);
+          }
+
           formElements.forEach((input) => {
             input.value = '';
           });
@@ -90,7 +119,7 @@ const sendForm = ({ formId, someElem = [] }) => {
     if (!form) {
       throw new Error('Неверно указана форма');
     }
-
+    requiredEmail();
     form.addEventListener('submit', (event) => {
       event.preventDefault();
 
